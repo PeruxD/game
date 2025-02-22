@@ -1,5 +1,5 @@
-// Variables globales
-let scene, camera, renderer, controls, world, physicsMaterial, playerBody;
+// script.js
+let scene, camera, renderer, world, playerBody;
 
 // Inicializar la escena
 function init() {
@@ -24,15 +24,17 @@ function init() {
     world = new CANNON.World();
     world.gravity.set(0, -9.82, 0);
 
-    // Material físico
-    physicsMaterial = new CANNON.Material();
+    // Textura del suelo
+    const textureLoader = new THREE.TextureLoader();
+    const groundTexture = textureLoader.load('https://i.imgur.com/5Z5Z5Z5.jpg');
+    groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set(10, 10);
 
-    // Crear el suelo
-    const groundShape = new CANNON.Plane();
-    const groundBody = new CANNON.Body({ mass: 0 });
-    groundBody.addShape(groundShape);
-    groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
-    world.addBody(groundBody);
+    const groundGeometry = new THREE.PlaneGeometry(100, 100);
+    const groundMaterial = new THREE.MeshBasicMaterial({ map: groundTexture });
+    const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+    groundMesh.rotation.x = -Math.PI / 2;
+    scene.add(groundMesh);
 
     // Crear el jugador
     const playerGeometry = new THREE.BoxGeometry(1, 2, 1);
@@ -48,9 +50,16 @@ function init() {
     // Controles
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('keyup', onKeyUp);
+    document.addEventListener('click', shoot);
 
     // Animación
     animate();
+}
+
+// Disparar
+function shoot() {
+    const shootSound = new Audio('https://example.com/path/to/shoot.mp3');
+    shootSound.play();
 }
 
 // Manejar teclas presionadas
