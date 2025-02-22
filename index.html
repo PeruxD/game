@@ -6,6 +6,12 @@
     <style>
         canvas {
             border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        body {
+            background-color: #f0f0f0;
+            text-align: center;
         }
     </style>
 </head>
@@ -15,15 +21,15 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Cargar imágenes desde URLs externas
+        // Cargar imágenes desde URLs externas (alternativas confiables)
         const playerImg = new Image();
-        playerImg.src = 'https://opengameart.org/sites/default/files/knight_stand.png'; // Caballero
+        playerImg.src = 'https://i.ibb.co/0nX2YkW/knight.png'; // Caballero
         const enemyImg = new Image();
-        enemyImg.src = 'https://opengameart.org/sites/default/files/slime_green.png'; // Monstruo
+        enemyImg.src = 'https://i.ibb.co/7yZqH8L/slime.png'; // Monstruo
         const grassTile = new Image();
-        grassTile.src = 'https://opengameart.org/sites/default/files/grass_0.png'; // Césped
+        grassTile.src = 'https://i.ibb.co/3mN5YpW/grass.png'; // Césped
         const stoneTile = new Image();
-        stoneTile.src = 'https://opengameart.org/sites/default/files/stone_1.png'; // Piedra
+        stoneTile.src = 'https://i.ibb.co/5WnqL7F/stone.png'; // Piedra
 
         // Objeto del jugador
         const player = {
@@ -117,21 +123,26 @@
         const totalImages = 4;
         function imageLoaded() {
             imagesLoaded++;
+            console.log(`Imágenes cargadas: ${imagesLoaded}/${totalImages}`);
             if (imagesLoaded === totalImages) {
+                console.log('Todas las imágenes cargadas. Iniciando juego...');
                 gameLoop();
             }
         }
 
+        // Manejo de carga y errores
         playerImg.onload = imageLoaded;
         enemyImg.onload = imageLoaded;
         grassTile.onload = imageLoaded;
         stoneTile.onload = imageLoaded;
 
-        // Manejar errores de carga de imágenes
-        playerImg.onerror = () => console.error('Error cargando knight.png');
-        enemyImg.onerror = () => console.error('Error cargando monster.png');
-        grassTile.onerror = () => console.error('Error cargando grass.png');
-        stoneTile.onerror = () => console.error('Error cargando stone.png');
+        playerImg.onerror = () => console.error('Error cargando imagen del jugador');
+        enemyImg.onerror = () => console.error('Error cargando imagen del enemigo');
+        grassTile.onerror = () => console.error('Error cargando tile de césped');
+        stoneTile.onerror = () => console.error('Error cargando tile de piedra');
+
+        // Mensaje inicial para verificar que el script se ejecuta
+        console.log('Script iniciado. Esperando carga de imágenes...');
     </script>
 </body>
 </html>
