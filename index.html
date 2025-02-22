@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Juego Básico en HTML5</title>
+    <title>Juego Básico con Sprites</title>
     <style>
         canvas {
             border: 1px solid black;
@@ -12,19 +12,46 @@
 <body>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
     <script>
-        // Obtener el canvas y el contexto
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+
+        // Cargar imágenes
+        const playerImg = new Image();
+        playerImg.src = 'assets/knight.png'; // Sprite del jugador
+        const enemyImg = new Image();
+        enemyImg.src = 'assets/monster.png'; // Sprite del enemigo
+        const grassTile = new Image();
+        grassTile.src = 'assets/grass.png'; // Tile de césped
+        const stoneTile = new Image();
+        stoneTile.src = 'assets/stone.png'; // Tile de piedra
 
         // Objeto del jugador
         const player = {
             x: 50,
             y: 50,
-            width: 40,
-            height: 40,
-            speed: 5,
-            color: 'blue'
+            width: 32,
+            height: 32,
+            speed: 5
         };
+
+        // Objeto del enemigo
+        const enemy = {
+            x: 400,
+            y: 300,
+            width: 32,
+            height: 32,
+            speed: 2
+        };
+
+        // Mapa basado en tiles (0 = césped, 1 = piedra)
+        const tileSize = 32;
+        const map = [
+            [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+            [0, 0, 1, 0, 0, 0, 0, 1, 0, 0]
+        ];
 
         // Controles de movimiento
         const keys = {
@@ -34,7 +61,6 @@
             ArrowRight: false
         };
 
-        // Escuchar eventos del teclado
         document.addEventListener('keydown', (e) => {
             if (e.key in keys) keys[e.key] = true;
         });
@@ -42,33 +68,65 @@
             if (e.key in keys) keys[e.key] = false;
         });
 
-        // Función para actualizar el estado del juego
+        // Actualizar estado del juego
         function update() {
             if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
             if (keys.ArrowDown && player.y < canvas.height - player.height) player.y += player.speed;
             if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
             if (keys.ArrowRight && player.x < canvas.width - player.width) player.x += player.speed;
+
+            // Movimiento simple del enemigo hacia el jugador
+            if (enemy.x < player.x) enemy.x += enemy.speed;
+            if (enemy.x > player.x) enemy.x -= enemy.speed;
+            if (enemy.y < player.y) enemy.y += enemy.speed;
+            if (enemy.y > player.y) enemy.y -= enemy.speed;
         }
 
-        // Función para dibujar en el canvas
+        // Dibujar el mapa
+        function drawMap() {
+            for (let row = 0; row < map.length; row++) {
+                for (let col = 0; col < map[0].length; col++) {
+                    const tileX = col * tileSize;
+                    const tileY = row * tileSize;
+                    if (map[row][col] === 0) {
+                        ctx.drawImage(grassTile, tileX, tileY, tileSize, tileSize);
+                    } else if (map[row][col] === 1) {
+                        ctx.drawImage(stoneTile, tileX, tileY, tileSize, tileSize);
+                    }
+                }
+            }
+        }
+
+        // Dibujar todo
         function draw() {
-            // Limpiar el canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Dibujar al jugador
-            ctx.fillStyle = player.color;
-            ctx.fillRect(player.x, player.y, player.width, player.height);
+            drawMap();
+            ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+            ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
         }
 
-        // Bucle principal del juego
+        // Bucle del juego
         function gameLoop() {
             update();
             draw();
             requestAnimationFrame(gameLoop);
         }
 
-        // Iniciar el juego
-        gameLoop();
+        // Esperar a que las imágenes carguen antes de empezar
+        let imagesLoaded = 0;
+        const totalImages = 4;
+        function imageLoaded() {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) {
+                gameLoop();
+            }
+        }
+
+        playerImg.onload = imageLoaded;
+        enemyImg.onload = imageLoaded;
+        grassTile.onload = imageLoaded;
+        stoneTile.onload = imageLoaded;
+
     </script>
 </body>
 </html>
