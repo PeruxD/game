@@ -21,15 +21,15 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Cargar imágenes desde URLs externas (alternativas confiables)
+        // Nuevas imágenes desde URLs externas confiables
         const playerImg = new Image();
-        playerImg.src = 'https://i.ibb.co/0nX2YkW/knight.png'; // Caballero
+        playerImg.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png'; // Bulbasaur como jugador
         const enemyImg = new Image();
-        enemyImg.src = 'https://i.ibb.co/7yZqH8L/slime.png'; // Monstruo
+        enemyImg.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png'; // Charmander como enemigo
         const grassTile = new Image();
-        grassTile.src = 'https://i.ibb.co/3mN5YpW/grass.png'; // Césped
+        grassTile.src = 'https://raw.githubusercontent.com/phillipdov/tilesets/master/Grass.png'; // Césped
         const stoneTile = new Image();
-        stoneTile.src = 'https://i.ibb.co/5WnqL7F/stone.png'; // Piedra
+        stoneTile.src = 'https://raw.githubusercontent.com/phillipdov/tilesets/master/Stone.png'; // Piedra
 
         // Objeto del jugador
         const player = {
@@ -141,7 +141,7 @@
         grassTile.onerror = () => console.error('Error cargando tile de césped');
         stoneTile.onerror = () => console.error('Error cargando tile de piedra');
 
-        // Mensaje inicial para verificar que el script se ejecuta
+        // Mensaje inicial
         console.log('Script iniciado. Esperando carga de imágenes...');
     </script>
 </body>
