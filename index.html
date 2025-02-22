@@ -2,177 +2,18 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Counter-Strike Básico en HTML5</title>
-    <style>
-        canvas {
-            border: 1px solid black;
-            display: block;
-            margin: 0 auto;
-        }
-        body {
-            background-color: #f0f0f0;
-            text-align: center;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPS Básico en HTML5</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+    <div id="game-container"></div>
 
-        // Imágenes externas confiables desde GitHub
-        const playerImg = new Image();
-        playerImg.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png'; // Jugador (Bulbasaur)
-        const enemyImg = new Image();
-        enemyImg.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png'; // Enemigo (Charmander)
-        const grassTile = new Image();
-        grassTile.src = 'https://raw.githubusercontent.com/phillipdov/tilesets/master/Grass.png'; // Césped
-        const stoneTile = new Image();
-        stoneTile.src = 'https://raw.githubusercontent.com/phillipdov/tilesets/master/Stone.png'; // Piedra
-
-        // Objetos del juego
-        const player = {
-            x: 50,
-            y: 50,
-            width: 32,
-            height: 32,
-            speed: 5
-        };
-
-        const enemy = {
-            x: 400,
-            y: 300,
-            width: 32,
-            height: 32,
-            speed: 2
-        };
-
-        const bullets = [];
-
-        // Mapa (0 = césped, 1 = piedra)
-        const tileSize = 32;
-        const map = [
-            [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
-            [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-            [1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-            [0, 0, 1, 0, 0, 0, 0, 1, 0, 0]
-        ];
-
-        // Controles
-        const keys = {
-            ArrowUp: false,
-            ArrowDown: false,
-            ArrowLeft: false,
-            ArrowRight: false,
-            Space: false
-        };
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key in keys) keys[e.key] = true;
-            if (e.key === ' ') {
-                bullets.push({
-                    x: player.x + player.width / 2,
-                    y: player.y,
-                    speed: 7,
-                    width: 5,
-                    height: 5
-                });
-            }
-        });
-        document.addEventListener('keyup', (e) => {
-            if (e.key in keys) keys[e.key] = false;
-        });
-
-        // Actualizar estado
-        function update() {
-            if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
-            if (keys.ArrowDown && player.y < canvas.height - player.height) player.y += player.speed;
-            if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
-            if (keys.ArrowRight && player.x < canvas.width - player.width) player.x += player.speed;
-
-            // Movimiento del enemigo hacia el jugador
-            if (enemy.x < player.x) enemy.x += enemy.speed;
-            if (enemy.x > player.x) enemy.x -= enemy.speed;
-            if (enemy.y < player.y) enemy.y += enemy.speed;
-            if (enemy.y > player.y) enemy.y -= enemy.speed;
-
-            // Actualizar balas
-            bullets.forEach((bullet, index) => {
-                bullet.y -= bullet.speed;
-                if (bullet.y < 0) bullets.splice(index, 1);
-                // Colisión simple con enemigo
-                if (
-                    bullet.x < enemy.x + enemy.width &&
-                    bullet.x + bullet.width > enemy.x &&
-                    bullet.y < enemy.y + enemy.height &&
-                    bullet.y + bullet.height > enemy.y
-                ) {
-                    enemy.x = 400; // Reiniciar posición del enemigo
-                    enemy.y = 300;
-                    bullets.splice(index, 1);
-                }
-            });
-        }
-
-        // Dibujar el mapa
-        function drawMap() {
-            for (let row = 0; row < map.length; row++) {
-                for (let col = 0; col < map[0].length; col++) {
-                    const tileX = col * tileSize;
-                    const tileY = row * tileSize;
-                    if (map[row][col] === 0) {
-                        ctx.drawImage(grassTile, tileX, tileY, tileSize, tileSize);
-                    } else if (map[row][col] === 1) {
-                        ctx.drawImage(stoneTile, tileX, tileY, tileSize, tileSize);
-                    }
-                }
-            }
-        }
-
-        // Dibujar todo
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawMap();
-            ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
-            ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
-            bullets.forEach(bullet => {
-                ctx.fillStyle = 'red';
-                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
-            });
-        }
-
-        // Bucle del juego
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Carga de imágenes
-        let imagesLoaded = 0;
-        const totalImages = 4;
-        function imageLoaded() {
-            imagesLoaded++;
-            console.log(`Imágenes cargadas: ${imagesLoaded}/${totalImages}`);
-            if (imagesLoaded === totalImages) {
-                console.log('Iniciando juego...');
-                gameLoop();
-            }
-        }
-
-        playerImg.onload = imageLoaded;
-        enemyImg.onload = imageLoaded;
-        grassTile.onload = imageLoaded;
-        stoneTile.onload = imageLoaded;
-
-        playerImg.onerror = () => console.error('Error cargando jugador');
-        enemyImg.onerror = () => console.error('Error cargando enemigo');
-        grassTile.onerror = () => console.error('Error cargando césped');
-        stoneTile.onerror = () => console.error('Error cargando piedra');
-
-        console.log('Script iniciado...');
-    </script>
+    <!-- Cargar Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Cargar Cannon.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+    <!-- Nuestro script principal -->
+    <script src="script.js"></script>
 </body>
 </html>
