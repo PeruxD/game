@@ -26,7 +26,7 @@ function init() {
 
     // Textura del suelo
     const textureLoader = new THREE.TextureLoader();
-    const groundTexture = textureLoader.load('https://i.imgur.com/5Z5Z5Z5.jpg');
+    const groundTexture = textureLoader.load('https://polyhaven.com/a/ground_rocky_dirt/1k/ground_rocky_dirt_diff_1k.jpg');
     groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
     groundTexture.repeat.set(10, 10);
 
@@ -46,6 +46,15 @@ function init() {
     playerBody.addShape(new CANNON.Box(new CANNON.Vec3(0.5, 1, 0.5)));
     playerBody.position.set(0, 5, 0);
     world.addBody(playerBody);
+
+    // Cargar modelo 3D de un arma
+    const loader = new GLTFLoader();
+    loader.load('https://cdn.glitch.global/your-model-url.glb', (gltf) => {
+        const weapon = gltf.scene;
+        weapon.scale.set(0.1, 0.1, 0.1);
+        weapon.position.set(1, 1, -2);
+        scene.add(weapon);
+    });
 
     // Controles
     document.addEventListener('keydown', onKeyDown);
