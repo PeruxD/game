@@ -15,15 +15,15 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Cargar imágenes
+        // Cargar imágenes desde URLs externas
         const playerImg = new Image();
-        playerImg.src = 'assets/knight.png'; // Sprite del jugador
+        playerImg.src = 'https://opengameart.org/sites/default/files/knight_stand.png'; // Caballero
         const enemyImg = new Image();
-        enemyImg.src = 'assets/monster.png'; // Sprite del enemigo
+        enemyImg.src = 'https://opengameart.org/sites/default/files/slime_green.png'; // Monstruo
         const grassTile = new Image();
-        grassTile.src = 'assets/grass.png'; // Tile de césped
+        grassTile.src = 'https://opengameart.org/sites/default/files/grass_0.png'; // Césped
         const stoneTile = new Image();
-        stoneTile.src = 'assets/stone.png'; // Tile de piedra
+        stoneTile.src = 'https://opengameart.org/sites/default/files/stone_1.png'; // Piedra
 
         // Objeto del jugador
         const player = {
@@ -126,6 +126,12 @@
         enemyImg.onload = imageLoaded;
         grassTile.onload = imageLoaded;
         stoneTile.onload = imageLoaded;
+
+        // Manejar errores de carga de imágenes
+        playerImg.onerror = () => console.error('Error cargando knight.png');
+        enemyImg.onerror = () => console.error('Error cargando monster.png');
+        grassTile.onerror = () => console.error('Error cargando grass.png');
+        stoneTile.onerror = () => console.error('Error cargando stone.png');
     </script>
 </body>
 </html>
